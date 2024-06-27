@@ -1,0 +1,176 @@
+﻿@page "/Create"
+@page "/Create/{ProductoId:int}"
+@inject ProductoServices ProductoServices
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+@rendermode InteractiveServer
+
+<EditForm Model="Producto" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="p-6 rounded-lg shadow-lg mb-6">
+        <h2 class="text-secondary-foreground text-2xl font-semibold mb-4">DIRECCIÓN DE FACTURACIÓN</h2>
+        <form class="space-y-6">
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-muted-foreground mb-2 " for="nombre">NOMBRE *</label>
+                    <input class="w-full p-3 border border-border rounded focus:outline-none focus:ring focus:border-primary" type="text" id="nombre" name="nombre">
+                </div>
+                <div>
+                    <label class="block text-muted-foreground mb-2 font-medium" for="apellido">APELLIDO *</label>
+                    <input class="w-full p-3 border border-border rounded focus:outline-none focus:ring focus:border-primary" type="text" id="apellido" name="apellido">
+                </div>
+            </div>
+            <div>
+                <label class="block text-muted-foreground mb-2 font-medium" for="telefono">TELÉFONO *</label>
+                <input class="w-full p-3 border border-border rounded focus:outline-none focus:ring focus:border-primary" type="text" id="telefono" name="telefono">
+            </div>
+            <div>
+                <label class="block text-muted-foreground mb-2 font-medium" for="direccion">DIRECCIÓN - LA REGISTRADA EN LA TARJETA DE CRÉDITO *</label>
+                <input class="w-full p-3 border border-border rounded mb-2 focus:outline-none focus:ring focus:border-primary" type="text" id="direccion1" name="direccion1" placeholder="MÁXIMO 40 CARACTERES">
+                <input class="w-full p-3 border border-border rounded focus:outline-none focus:ring focus:border-primary" type="text" id="direccion2" name="direccion2" placeholder="MÁXIMO 40 CARACTERES">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-muted-foreground mb-2 font-medium" for="pais">PAÍS *</label>
+                    <input class="w-full p-3 border border-border rounded bg-gray-100" type="text" id="pais" name="pais" value="REPÚBLICA DOMINICANA" disabled>
+                </div>
+                <div>
+                    <label class="block text-muted-foreground mb-2 font-medium" for="ciudad">CIUDAD *</label>
+                    <input class="w-full p-3 border border-border rounded focus:outline-none focus:ring focus:border-primary" type="text" id="ciudad" name="ciudad" value="SANTO DOMINGO D.N">
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-muted-foreground mb-2 font-medium" for="cedula">NÚMERO DE CÉDULA *</label>
+                    <input class="w-full p-3 border border-border rounded focus:outline-none focus:ring focus:border-primary" type="text" id="cedula" name="cedula" value="402-604979-0">
+                </div>
+                <div>
+                    <label class="block text-muted-foreground mb-2 font-medium" for="provincia">PROVINCIA *</label>
+                    <input class="w-full p-3 border border-border rounded focus:outline-none focus:ring focus:border-primary" type="text" id="provincia" name="provincia" value="SANTO DOMINGO D.N">
+                </div>
+            </div>
+        </form>
+    </div>
+
+    @* <div class="bg-secondary p-6 rounded-lg shadow-lg mb-6">
+        <h2 class="text-secondary-foreground text-2xl font-semibold mb-4">MÉTODO DE ENVÍO</h2>
+        <form class="space-y-6">
+            <div>
+                <label class="block text-muted-foreground mb-2 font-medium">Costo de transporte por provincia</label>
+                <div class="flex items-center">
+                    <input class="mr-2" type="radio" id="envio1" name="envio" value="850">
+                    <label for="envio1">RD$ 850.00</label>
+                </div>
+            </div>
+            <div>
+                <label class="block text-muted-foreground mb-2 font-medium">Recogida en tienda - Le confirmaremos via Telefónica hora de recogida.</label>
+                <div class="flex items-center">
+                    <input class="mr-2" type="radio" id="envio2" name="envio" value="0">
+                    <label for="envio2">RD$ 0.00</label>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="bg-secondary p-6 rounded-lg shadow-lg">
+        <h2 class="text-secondary-foreground text-2xl font-semibold mb-4">MÉTODO DE PAGO</h2>
+        <div class="flex space-x-4 mb-4">
+            <img class="w-12 h-8" src="https://placehold.co/50x30?text=Visa" alt="Visa">
+            <img class="w-12 h-8" src="https://placehold.co/50x30?text=Mastercard" alt="Mastercard">
+            <img class="w-12 h-8" src="https://placehold.co/50x30?text=PayPal" alt="PayPal">
+            <img class="w-12 h-8" src="https://placehold.co/50x30?text=American+Express" alt="American Express">
+        </div>
+        <form class="space-y-6">
+            <div class="flex items-center">
+                <input class="mr-2" type="radio" id="pago1" name="pago" value="visa_mastercard">
+                <label for="pago1">Tarjetas Visa y Mastercard</label>
+            </div>
+            <div class="flex items-center">
+                <input class="mr-2" type="radio" id="pago2" name="pago" value="electropay">
+                <label for="pago2">Planes de Financiamiento - Electropay</label>
+            </div>
+            <div class="flex items-center">
+                <input class="mr-2" type="radio" id="pago3" name="pago" value="cuotas_tarjetas">
+                <label for="pago3">Pago con cuotas de Tarjetas</label>
+            </div>
+            <div class="flex items-center">
+                <input class="mr-2" type="radio" id="pago4" name="pago" value="bhd_leon">
+                <label for="pago4">Botón de pago Banco BHD León</label>
+            </div>
+            <div class="flex items-center">
+                <input class="mr-2" type="radio" id="pago5" name="pago" value="american_express">
+                <label for="pago5">Tarjetas de Crédito American Express</label>
+            </div>
+            <div class="flex items-center">
+                <input class="mr-2" type="radio" id="pago6" name="pago" value="transferencia">
+                <label for="pago6">Transferencia / depósito bancario / PayPal</label>
+            </div>
+        </form> *@
+    
+</EditForm>
+
+
+
+@code {
+    [Parameter]
+    public int ProductoId { get; set; }
+    public Productos Producto { get; set; } = new Productos();
+    private bool Existe = false;
+
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     if (ProductoId > 0)
+    //     {
+    //         this.Producto.ProductoId = ProductoId;
+    //         await this.Buscar();
+    //     }
+    // }
+
+    private bool Validar()
+    {
+        Existe = ProductoServices.Listar(pr => pr.Descripcion!.ToLower() == Producto.Descripcion!.ToLower() && pr.ProductoId != Producto.ProductoId).Any();
+        return Existe;
+    }
+
+    private async Task Guardar()
+    {
+        if (Validar())
+        {
+            // Implement JSRuntime to show a message
+            await JSRuntime.InvokeVoidAsync("alert", "El producto ya existe.");
+            return;
+        }
+
+        var guardo = await ProductoServices.Guardar(Producto);
+        if (guardo)
+        {
+            await Nuevo();
+            await JSRuntime.InvokeVoidAsync("alert", "Producto guardado correctamente.");
+        }
+        else
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "Error al guardar el producto.");
+        }
+    }
+
+    private async Task Nuevo()
+    {
+        Producto = new Productos();
+        Existe = false;
+    }
+
+    private async Task Eliminar()
+    {
+        var eliminado = await ProductoServices.Eliminar(Producto.ProductoId);
+        if (eliminado)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "Producto eliminado correctamente.");
+            await Nuevo();
+        }
+        else
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "Error al eliminar el producto.");
+        }
+    }
+}
