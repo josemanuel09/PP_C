@@ -1,0 +1,124 @@
+﻿@page "/Index"
+@inject ProductoServices ProductoServices
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+@rendermode InteractiveServer
+
+
+<EditForm Model="ListaProductos" class="border shadow-lg p-3 rounded">
+    <div class="card-header bg-primary text-white text-center py-2 rounded">
+        <h3 style="font-weight: bold;" class="mb-0 font-weight-bold">Lista de Productos</h3>
+    </div>
+    <div class="card-body">
+        <div class="row mb-3 align-items-end">
+            <div class="col-md-3">
+                <label for="Filtro" class="form-label">Filtrar por:</label>
+                <select @bind="filtro" class="form-select">
+                    <option value="id">ProductoId</option>
+                    <option value="descripcion">Descripci&oacuten</option>
+                    <option value="precio">Precio</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="ValorFiltro" class="form-label">Búsqueda:</label>
+                <div class="input-group">
+                    <input @bind="valorFiltro" class="form-control" placeholder="Buscar" />
+                    <button @onclick="Buscar" class="btn btn-outline-primary" type="button">
+                        <span class="bi bi-search"></span> Buscar
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-3 text-end">
+                <a href="/Create" class="btn btn-success" type="button"><span class="bi bi-floppy"></span> Crear </a>
+            </div>
+        </div>
+    </div>
+    <table class="table table-bordered text-center">
+        <thead class="bg-primary text-white">
+            <tr>
+                <th>ProductoId</th>
+                <th>Descripci&oacuten</th>
+                <th>Precio</th>
+                <th>Ver</th>
+                <th>Editar</th>
+                <th>Eliminar</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var producto in ListaProductos)
+            {
+                <tr>
+                    <td>@producto.ProductoId</td>
+                    <td>@producto.Descripcion</td>
+                    <td>@producto.Precio</td>
+                    <td>
+                        <a href="/View/@producto.ProductoId" style="border: none; background-color: transparent;" class="btn-detalle">
+                            <span class="bi bi-info-circle-fill" style="font-size: 2rem;"></span>
+                        </a>
+
+                    </td>
+                    <td>
+                        <a href="/Edit/@producto.ProductoId" style="border: none; background-color: transparent;" class="btn-editar">
+                            <span class="bi bi-marker-tip" style="font-size: 2rem;"></span>
+                        </a>
+
+                    </td>
+
+                    <td>
+                        <a href="/Delete/@producto.ProductoId" style="border: none; background-color: transparent;" class="btn-eliminar">
+                            <span class="bi bi-dash-circle-fill" style="font-size: 2rem;"></span>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="card-footer fw-bold">
+        <p>Productos en Stock: @ListaProductos.Count</p>
+        <div class="card-footer text-end">
+            <p>Total de Precios: @ListaProductos.Sum(p => p.Precio)</p>
+
+        </div>
+    </div>
+</EditForm>
+
+
+@code {
+    public Productos Productos = new Productos();
+    public List<Productos> ListaProductos = new List<Productos>();
+    public double SumaPrecios = 0;
+
+    private string filtro = "Id";
+    private string valorFiltro = "";
+
+
+    protected override void OnInitialized()
+    {
+        ListaProductos =  ProductoServices.Listar(prop => true);
+    }
+
+    private void Buscar()
+    {
+        if (valorFiltro.Trim() != "")
+        {
+            if (filtro == "id" && int.TryParse(valorFiltro, out int ProductoId))
+            {
+                ListaProductos = ProductoServices.Listar(p => p.ProductoId == ProductoId);
+            }
+            else if (filtro == "descripcion")
+            {
+                ListaProductos = ProductoServices.Listar(p => p.Descripcion == valorFiltro);
+            }
+            else if (filtro == "diascompromiso" && int.TryParse(valorFiltro, out int Precio))
+            {
+                ListaProductos = ProductoServices.Listar(p => p.Precio == Precio);
+            }
+        }
+        else
+        {
+            ListaProductos = ProductoServices.Listar(p => true);
+        }
+    }
+}
+
+}

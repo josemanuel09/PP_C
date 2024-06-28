@@ -1,5 +1,4 @@
-﻿@page "/Create"
-@page "/Create/{ProductoId:int}"
+﻿@page "/Edit/{ProductoId:int}"
 @inject ProductoServices ProductoServices
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
@@ -9,7 +8,7 @@
     <DataAnnotationsValidator />
     <div class="card shadow-lg border-0 rounded" style="background-color: #f8f9fa;">
         <div class="card-header bg-primary text-white" style="text-align: center;">
-            <h3> <i class="fas fa-clipboard-list"></i> Registro de Productos</h3>
+            <h3> <i class="fas fa-clipboard-list"></i> Actualizar Producto</h3>
         </div>
 
         <div class="card-body">
@@ -43,7 +42,7 @@
         <div class="card-footer bg-light d-flex justify-content-center mt-3">
             <div class="btn-group">
                 <button type="button" class="btn btn-outline-primary ml-2" @onclick="Nuevo"><span class="bi bi-plus"></span> Nuevo </button>
-                <button type="submit" class="btn btn-outline-success ml-2"><span class="bi bi-check-circle-fill"></span> Guardar </button>
+                <button type="submit" class="btn btn-outline-success ml-2"><span class="bi bi-check-circle-fill"></span> Actualizar </button>
                 <a type="button" href="/Index/" class="btn btn-outline-danger"><span class="bi bi-arrow-bar-left"></span> Retroceder </a>
             </div>
         </div>
@@ -57,14 +56,28 @@
     public Productos Producto { get; set; } = new Productos();
     private bool Existe = false;
 
-    // protected override async Task OnInitializedAsync()
-    // {
-    //     if (ProductoId > 0)
-    //     {
-    //         this.Producto.ProductoId = ProductoId;
-    //         await this.Buscar();
-    //     }
-    // }
+    protected override async Task OnInitializedAsync()
+    {
+        if (ProductoId != 0)
+        {
+            await Buscar();
+        }
+    }
+    public async Task Buscar()
+    {
+        Existe = false;
+        var productoEncontrada = await ProductoServices.Buscar(ProductoId);
+
+        if (productoEncontrada != null)
+        {
+            Producto = productoEncontrada;
+        }
+        else
+        {
+            await Nuevo();
+        }
+    }
+
 
     private bool Validar()
     {
@@ -84,12 +97,11 @@
         var guardo = await ProductoServices.Guardar(Producto);
         if (guardo)
         {
-            await Nuevo();
-            await JSRuntime.InvokeVoidAsync("alert", "Producto guardado correctamente.");
+            await JSRuntime.InvokeVoidAsync("alert", "Producto se actualizo correctamente.");
         }
         else
         {
-            await JSRuntime.InvokeVoidAsync("alert", "Error al guardar el producto.");
+            await JSRuntime.InvokeVoidAsync("alert", "Error al actualizar el producto.");
         }
     }
 

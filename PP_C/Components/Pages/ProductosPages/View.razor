@@ -1,0 +1,66 @@
+﻿@page "/View/{ProductoId:int}"
+@inject ProductoServices ProductoServices
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+@rendermode InteractiveServer
+<PageTitle>Factura del Producto</PageTitle>
+
+@if (Producto != null)
+{
+    <div class="container invoice">
+        <div class="card shadow-header">
+            <div class="card-header bg-dark text-white text-center py-2 rounded">
+                <h3 class="text-center"><strong>Factura del Producto</strong></h3>
+                <p class="text-center">Número de Factura: @Producto.ProductoId</p>
+                <p class="text-center">Fecha: @DateTime.Now.ToString("dd/MM/yyyy")</p>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li><strong>ProductoId:</strong> @Producto.ProductoId</li>
+                                <li><strong>Descripción:</strong> @Producto.Descripcion</li>
+                                <li><strong>Precio:</strong> @Producto.Precio.ToString("C")</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <div class="card-body">
+                            <h5><strong>Total:</strong> @Producto.Precio.ToString("C")</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer text-center">
+                <button type="button" class="btn btn-outline-primary" @onclick="Volver"><i class="bi bi-box-arrow-left"></i> Volver</button>
+                <button type="button" class="btn btn-outline-success" @onclick="Imprimir"><i class="bi bi-printer"></i> Imprimir</button>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <p>Producto no encontrado.</p>
+}
+
+@code {
+    [Parameter]
+    public int ProductoId { get; set; }
+    public Productos Producto { get; set; } = new Productos();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Producto = await ProductoServices.Buscar(ProductoId);
+    }
+
+    public void Volver()
+    {
+        NavigationManager.NavigateTo("/Index");
+    }
+
+    public void Imprimir()
+    {
+        JSRuntime.InvokeVoidAsync("window.print");
+    }
+}
