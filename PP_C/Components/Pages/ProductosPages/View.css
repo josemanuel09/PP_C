@@ -55,16 +55,17 @@
         visibility: hidden;
     }
 
-    .invoice, .invoice * {
-        visibility: visible;
-    }
-
     .invoice {
+        visibility: visible;
         position: absolute;
         left: 0;
         top: 0;
         width: 100%;
     }
+
+        .invoice * {
+            visibility: visible;
+        }
 
         .invoice .card-footer {
             display: none;
